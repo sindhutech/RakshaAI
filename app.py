@@ -35,7 +35,7 @@ def add_bg_from_local(image_file):
 add_bg_from_local("background.jpg")
 
 # -----------------------------
-# LIGHTWEIGHT REPORT SUMMARIZER
+# REPORT SUMMARIZER
 # -----------------------------
 
 def summarize_report(text):
@@ -266,6 +266,44 @@ if st.button("Analyze Symptoms"):
     st.write("Severity Level:", severity)
     st.write("Confidence:", confidence)
     st.write("Advice:", advice)
+
+    # -----------------------------
+    # HOSPITAL RECOMMENDATION
+    # -----------------------------
+
+    st.subheader("Recommended Hospitals")
+
+    district_hospitals = df[df["District"] == district]
+
+    if speciality != "":
+        speciality_hospitals = district_hospitals[
+            district_hospitals["Speciality"].str.upper().str.contains(speciality, na=False)
+        ]
+    else:
+        speciality_hospitals = district_hospitals
+
+    display = speciality_hospitals.head(5) if not speciality_hospitals.empty else district_hospitals.head(5)
+
+    for _, row in display.iterrows():
+
+        email = row["Mail-ID"]
+
+        if email == "nan":
+            email = "Not Available"
+
+        st.markdown(f"""
+### 🏥 {row['Hospital Name']}
+
+📍 **Address:** {row['Address']}
+
+📞 **Phone:** {row['Phone No']}
+
+📧 **Email:** {email}
+
+💳 **Scheme:** {row['Scheme']}
+
+🩺 **Speciality:** {row['Speciality']}
+""")
 
 # -----------------------------
 # MEDICAL REPORT
